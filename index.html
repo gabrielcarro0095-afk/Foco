@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Foco — Lector RSVP</title>
+
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0d0f13;
+  --p:#171a21;
+  --p2:#20242d;
+  --t:#f5f7fa;
+  --m:#9da5b2;
+  --l:#303641;
+  --a:#7dd3fc;
+  --y:#fbbf24
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  background:var(--bg);
+  color:var(--t);
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif
+}
+
+#app{
+  min-height:100vh;
+  background:var(--bg)
+}
+
+header{
+  height:68px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 22px;
+  border-bottom:1px solid var(--l)
+}
+
+.logo{
+  font-weight:800;
+  font-size:20px
+}
+
+.logo span{
+  color:var(--a)
+}
+
+.top{
+  display:flex;
+  gap:10px
+}
+
+.pill,.btn{
+  border:1px solid var(--l);
+  background:var(--p2);
+  color:var(--t);
+  border-radius:10px;
+  padding:9px 12px
+}
+
+.pill{
+  border-radius:999px;
+  font-size:12px;
+  color:var(--m)
+}
+
+button{
+  cursor:pointer;
+  font-weight:650
+}
+
+.primary{
+  background:var(--a);
+  color:#071017;
+  border-color:transparent
+}
+
+main{
+  max-width:1180px;
+  margin:auto;
+  padding:26px 20px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 310px;
+  gap:20px
+}
+
+.reader{
+  min-height:620px;
+  background:radial-gradient(circle at 50% 45%,#1a1e27,#11141a 48%,#0d0f13);
+  border:1px solid var(--l);
+  border-radius:20px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden
+}
+
+.stage{
+  flex:1;
+  display:grid;
+  place-items:center;
+  position:relative;
+  padding:30px 20px
+}
+
+.focus{
+  position:absolute;
+  left:50%;
+  top:50%;
+  height:100px;
+  width:2px;
+  transform:translate(-50%,-50%);
+  background:var(--a);
+  opacity:.35
+}
+
+.word{
+  position:relative;
+  font-size:76px;
+  font-weight:650;
+  letter-spacing:-.055em;
+  line-height:1;
+  white-space:nowrap;
+  text-align:center
+}
+
+.pivot{
+  color:var(--y)
+}
+
+.empty{
+  color:var(--m);
+  font-size:18px;
+  text-align:center;
+  line-height:1.5
+}
+
+.empty strong{
+  color:var(--t)
+}
+
+.controls{
+  border-top:1px solid var(--l);
+  padding:15px 18px;
+  display:flex;
+  gap:9px;
+  align-items:center;
+  flex-wrap:wrap
+}
+
+.speed{
+  margin-left:auto;
+  color:var(--m)
+}
+
+.speed b{
+  color:var(--t);
+  font-size:17px
+}
+
+.progress{
+  height:4px;
+  background:#292e38
+}
+
+.bar{
+  height:100%;
+  background:var(--a);
+  width:0%
+}
+
+.sidebar{
+  display:flex;
+  flex-direction:column;
+  gap:14px
+}
+
+.card{
+  background:var(--p);
+  border:1px solid var(--l);
+  border-radius:16px;
+  padding:17px
+}
+
+.card h3{
+  margin:0 0 13px;
+  font-size:14px
+}
+
+textarea{
+  width:100%;
+  min-height:190px;
+  resize:vertical;
+  background:#0f1217;
+  color:var(--t);
+  border:1px solid var(--l);
+  border-radius:10px;
+  padding:12px;
+  font:14px/1.5 inherit
+}
+
+.row{
+  display:flex;
+  gap:8px;
+  margin-top:8px
+}
+
+.row>*{
+  flex:1
+}
+
+.field{
+  margin:12px 0
+}
+
+.field label{
+  display:flex;
+  justify-content:space-between;
+  color:var(--m);
+  font-size:12px;
+  margin-bottom:7px
+}
+
+input[type=range]{
+  width:100%;
+  accent-color:var(--a)
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px
+}
+
+.stat{
+  background:var(--p2);
+  border-radius:10px;
+  padding:11px
+}
+
+.stat small{
+  display:block;
+  color:var(--m);
+  font-size:11px
+}
+
+.stat strong{
+  display:block;
+  margin-top:4px;
+  font-size:18px
+}
+
+.hint{
+  color:var(--m);
+  font-size:12px;
+  line-height:1.5
+}
+
+@media(max-width:850px){
+  main{
+    grid-template-columns:1fr;
+    padding:12px
+  }
+
+  .reader{
+    min-height:65vh
+  }
+
+  .sidebar{
+    order:2
+  }
+
+  .pill{
+    display:none
+  }
+
+  .speed{
+    margin-left:0
+  }
+
+  .stage{
+    min-height:330px
+  }
+
+  .word{
+    font-size:clamp(44px,13vw,80px)
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+<header>
+  <div class="logo">Foco<span>.</span></div>
+
+  <div class="top">
+    <div class="pill">RSVP · lectura rápida</div>
+    <button class="btn" id="clear">Nuevo texto</button>
+  </div>
+</header>
+
+<main>
+
+<section class="reader">
+
+  <div class="stage">
+    <div class="focus"></div>
+
+    <div id="word" class="word">
+      <div class="empty">
+        <strong>Pegá un texto para empezar.</strong>
+        <br>
+        La palabra aparecerá en el centro y la letra de referencia quedará fija.
+      </div>
+    </div>
+  </div>
+
+  <div class="progress">
+    <div class="bar" id="bar"></div>
+  </div>
+
+  <div class="controls">
+    <button class="btn" id="back">↶ 10</button>
+    <button class="btn primary" id="play">▶ Iniciar</button>
+    <button class="btn" id="next">10 ↷</button>
+    <button class="btn" id="slower">−</button>
+    <button class="btn" id="faster">+</button>
+
+    <div class="speed">
+      <b id="speedOut">300</b> ppm
+    </div>
+  </div>
+
+</section>
+
+<aside class="sidebar">
+
+  <div class="card">
+    <h3>Texto</h3>
+
+    <textarea
+      id="text"
+      placeholder="Pegá acá un artículo, apuntes, un capítulo…">
+    </textarea>
+
+    <div class="row">
+      <button class="btn primary" id="load">Cargar texto</button>
+      <button class="btn" id="sample">Ejemplo</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Lectura</h3>
+
+    <div class="field">
+      <label>
+        Velocidad
+        <output id="speedLabel">300 ppm</output>
+      </label>
+
+      <input
+        id="speed"
+        type="range"
+        min="100"
+        max="1000"
+        step="10"
+        value="300">
+    </div>
+
+    <div class="field">
+      <label>
+        Tamaño
+        <output id="sizeLabel">76 px</output>
+      </label>
+
+      <input
+        id="size"
+        type="range"
+        min="42"
+        max="120"
+        step="2"
+        value="76">
+    </div>
+
+    <div class="field">
+      <label>
+        Modo enfoque
+        <output id="focusLabel">activado</output>
+      </label>
+
+      <button
+        class="btn"
+        id="toggleFocus"
+        style="width:100%">
+        Cambiar enfoque
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Progreso</h3>
+
+    <div class="stats">
+
+      <div class="stat">
+        <small>Palabras</small>
+        <strong id="count">0 / 0</strong>
+      </div>
+
+      <div class="stat">
+        <small>Tiempo</small>
+        <strong id="time">0:00</strong>
+      </div>
+
+    </div>
+
+    <p class="hint">
+      Atajos: espacio = pausa · ←/→ = retroceder/avanzar · ↑/↓ = velocidad.
+    </p>
+  </div>
+
+</aside>
+
+</main>
+</div>
+
+<script>
+
+const $ = s => document.querySelector(s);
+
+let words = [];
+let i = 0;
+let timer = null;
+let playing = false;
+let speed = 300;
+let focus = true;
+
+const samples = `
+La lectura rápida no consiste simplemente en hacer que las palabras pasen cada vez más rápido. El objetivo es encontrar una velocidad en la que los ojos puedan fijarse con precisión y el cerebro todavía tenga tiempo suficiente para construir significado. La presentación serial de palabras elimina parte del movimiento ocular que normalmente hacemos al recorrer una línea, y por eso puede resultar sorprendentemente cómoda después de unos minutos de adaptación.
+`;
+
+function clean(t){
+  return t.replace(/\s+/g,' ').trim();
+}
+
+function pivotHTML(w){
+
+  if(!focus) return w;
+
+  let p = Math.max(
+    0,
+    Math.min(
+      w.length - 1,
+      Math.floor((w.length - 1) * .38)
+    )
+  );
+
+  return w.slice(0,p)
+    + '<span class="pivot">'
+    + w[p]
+    + '</span>'
+    + w.slice(p+1);
+}
+
+function render(){
+
+  if(!words.length) return;
+
+  $('#word').innerHTML = pivotHTML(words[i]);
+
+  $('#count').textContent =
+    `${i+1} / ${words.length}`;
+
+  $('#bar').style.width =
+    ((i+1)/words.length*100) + '%';
+}
+
+function loop(){
+
+  if(!playing) return;
+
+  timer = setTimeout(() => {
+
+    if(i >= words.length-1){
+
+      playing = false;
+      $('#play').textContent = '▶ Reiniciar';
+
+      return;
+    }
+
+    i++;
+    render();
+    loop();
+
+  },60000/speed);
+}
+
+function toggle(){
+
+  if(!words.length) return;
+
+  if(i >= words.length-1)
+    i = 0;
+
+  playing = !playing;
+
+  $('#play').textContent =
+    playing ? '⏸ Pausar' : '▶ Continuar';
+
+  clearTimeout(timer);
+
+  if(playing)
+    loop();
+}
+
+function load(){
+
+  let t = clean($('#text').value);
+
+  if(!t) return;
+
+  words = t.split(' ');
+  i = 0;
+  playing = false;
+
+  clearTimeout(timer);
+
+  $('#play').textContent = '▶ Iniciar';
+
+  render();
+  updateTime();
+}
+
+function setSpeed(v){
+
+  speed = +v;
+
+  $('#speed').value = speed;
+  $('#speedOut').textContent = speed;
+  $('#speedLabel').textContent = speed + ' ppm';
+
+  if(playing){
+    clearTimeout(timer);
+    loop();
+  }
+}
+
+function updateTime(){
+
+  let s = Math.ceil(
+    words.length / speed * 60
+  );
+
+  $('#time').textContent =
+    `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+}
+
+$('#load').onclick = load;
+
+$('#sample').onclick = () => {
+  $('#text').value = samples;
+  load();
+};
+
+$('#clear').onclick = () => {
+
+  words = [];
+  i = 0;
+  playing = false;
+
+  clearTimeout(timer);
+
+  $('#text').value = '';
+
+  $('#play').textContent = '▶ Iniciar';
+
+  $('#word').innerHTML =
+    '<div class="empty">' +
+    '<strong>Pegá un texto para empezar.</strong>' +
+    '<br>' +
+    'La palabra aparecerá en el centro y la letra de referencia quedará fija.' +
+    '</div>';
+
+  $('#bar').style.width = '0%';
+  $('#count').textContent = '0 / 0';
+};
+
+$('#play').onclick = toggle;
+
+$('#back').onclick = () => {
+
+  i = Math.max(0,i-10);
+  render();
+};
+
+$('#next').onclick = () => {
+
+  if(words.length)
+    i = Math.min(words.length-1,i+10);
+
+  render();
+};
+
+$('#slower').onclick = () => {
+
+  setSpeed(Math.max(100,speed-25));
+  updateTime();
+};
+
+$('#faster').onclick = () => {
+
+  setSpeed(Math.min(1000,speed+25));
+  updateTime();
+};
+
+$('#speed').oninput = e => {
+
+  setSpeed(e.target.value);
+  updateTime();
+};
+
+$('#size').oninput = e => {
+
+  $('#word').style.fontSize =
+    e.target.value + 'px';
+
+  $('#sizeLabel').textContent =
+    e.target.value + ' px';
+};
+
+$('#toggleFocus').onclick = () => {
+
+  focus = !focus;
+
+  $('#focusLabel').textContent =
+    focus ? 'activado' : 'desactivado';
+
+  $('.focus').style.opacity =
+    focus ? '.35' : '0';
+
+  render();
+};
+
+document.addEventListener('keydown',e => {
+
+  if(e.target.tagName === 'TEXTAREA')
+    return;
+
+  if(e.code === 'Space'){
+    e.preventDefault();
+    toggle();
+  }
+
+  if(e.key === 'ArrowLeft'){
+    i = Math.max(0,i-1);
+    render();
+  }
+
+  if(e.key === 'ArrowRight'){
+    i = Math.min(words.length-1,i+1);
+    render();
+  }
+
+  if(e.key === 'ArrowUp'){
+    setSpeed(Math.min(1000,speed+25));
+    updateTime();
+  }
+
+  if(e.key === 'ArrowDown'){
+    setSpeed(Math.max(100,speed-25));
+    updateTime();
+  }
+
+});
+
+</script>
+
+</body>
+</html>
