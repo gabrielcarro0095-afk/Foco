@@ -3,37 +3,48 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0d0f13">
-
 <title>Foco — Lector RSVP</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <style>
 :root{
   color-scheme:dark;
   --bg:#0d0f13;
-  --panel:#171a21;
-  --panel2:#20242d;
-  --text:#f5f7fa;
-  --muted:#9da5b2;
-  --line:#303641;
-  --accent:#7dd3fc;
-  --pivot:#7dd3fc;
-  --good:#86efac;
+  --p:#171a21;
+  --p2:#20242d;
+  --t:#f5f7fa;
+  --m:#9da5b2;
+  --l:#303641;
+  --a:#7dd3fc;
+  --y:#fbbf24;
+  --danger:#f87171;
 }
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box
+}
 
 html,body{
   margin:0;
-  min-height:100%;
   background:var(--bg);
-  color:var(--text);
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--t);
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif
 }
 
-button,input,textarea{font:inherit}
+button,input,textarea{
+  font:inherit
+}
 
-button{cursor:pointer}
+button{
+  cursor:pointer;
+  font-weight:650
+}
+
+#app{
+  min-height:100vh;
+  background:var(--bg)
+}
 
 header{
   height:68px;
@@ -41,88 +52,66 @@ header{
   align-items:center;
   justify-content:space-between;
   padding:0 22px;
-  border-bottom:1px solid var(--line);
+  border-bottom:1px solid var(--l)
 }
 
 .logo{
-  font-size:21px;
-  font-weight:850;
+  font-weight:800;
+  font-size:20px
 }
 
-.logo span{color:var(--accent)}
+.logo span{
+  color:var(--a)
+}
 
 .top{
   display:flex;
-  gap:10px;
-  align-items:center;
+  gap:10px
+}
+
+.pill,.btn{
+  border:1px solid var(--l);
+  background:var(--p2);
+  color:var(--t);
+  border-radius:10px;
+  padding:9px 12px
 }
 
 .pill{
-  border:1px solid var(--line);
   border-radius:999px;
-  padding:8px 11px;
-  color:var(--muted);
   font-size:12px;
+  color:var(--m)
 }
-
-.btn{
-  border:1px solid var(--line);
-  background:var(--panel2);
-  color:var(--text);
-  border-radius:10px;
-  padding:10px 12px;
-  font-weight:650;
-}
-
-.btn:hover{filter:brightness(1.08)}
 
 .primary{
-  background:var(--accent);
+  background:var(--a);
   color:#071017;
-  border-color:transparent;
+  border-color:transparent
+}
+
+.danger{
+  color:var(--danger);
+  border-color:#4b2929;
+  background:#241719
 }
 
 main{
-  max-width:1200px;
+  max-width:1180px;
   margin:auto;
-  padding:24px 20px;
+  padding:26px 20px;
   display:grid;
   grid-template-columns:minmax(0,1fr) 330px;
-  gap:20px;
+  gap:20px
 }
 
 .reader{
-  min-height:640px;
-  border:1px solid var(--line);
+  min-height:620px;
+  background:radial-gradient(circle at 50% 45%,#1a1e27,#11141a 48%,#0d0f13);
+  border:1px solid var(--l);
   border-radius:20px;
-  overflow:hidden;
   display:flex;
   flex-direction:column;
-  background:
-    radial-gradient(circle at 50% 45%,#1a1e27,#11141a 48%,#0d0f13);
-}
-
-.documentInfo{
-  min-height:45px;
-  padding:10px 16px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  border-bottom:1px solid var(--line);
-  color:var(--muted);
-  font-size:12px;
-}
-
-.documentInfo strong{
-  color:var(--text);
-  overflow:hidden;
-  white-space:nowrap;
-  text-overflow:ellipsis;
-}
-
-.pageInfo{
-  white-space:nowrap;
+  overflow:hidden
 }
 
 .stage{
@@ -130,20 +119,18 @@ main{
   display:grid;
   place-items:center;
   position:relative;
-  padding:35px 20px;
-  min-height:420px;
-  overflow:hidden;
+  padding:30px 20px
 }
 
-.focusLine{
+.focus{
   position:absolute;
   left:50%;
   top:50%;
-  height:105px;
+  height:100px;
   width:2px;
   transform:translate(-50%,-50%);
-  background:var(--accent);
-  opacity:.25;
+  background:var(--a);
+  opacity:.35
 }
 
 .word{
@@ -153,124 +140,71 @@ main{
   letter-spacing:-.055em;
   line-height:1;
   white-space:nowrap;
-  text-align:center;
+  text-align:center
 }
 
-.pivot{color:var(--pivot)}
+.pivot{
+  color:var(--y)
+}
 
 .empty{
-  max-width:520px;
-  color:var(--muted);
-  font-size:17px;
-  line-height:1.55;
+  color:var(--m);
+  font-size:18px;
   text-align:center;
-  white-space:normal;
-  letter-spacing:normal;
-  font-weight:400;
+  line-height:1.5
 }
 
-.empty strong{color:var(--text)}
+.empty strong{
+  color:var(--t)
+}
+
+.controls{
+  border-top:1px solid var(--l);
+  padding:15px 18px;
+  display:flex;
+  gap:9px;
+  align-items:center;
+  flex-wrap:wrap
+}
+
+.speed{
+  margin-left:auto;
+  color:var(--m)
+}
+
+.speed b{
+  color:var(--t);
+  font-size:17px
+}
 
 .progress{
-  height:5px;
-  background:#292e38;
+  height:4px;
+  background:#292e38
 }
 
 .bar{
   height:100%;
-  width:0;
-  background:var(--accent);
-  transition:width .15s linear;
-}
-
-.controls{
-  padding:15px 18px;
-  border-top:1px solid var(--line);
-  display:flex;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:9px;
-}
-
-.speedDisplay{
-  margin-left:auto;
-  color:var(--muted);
-}
-
-.speedDisplay b{
-  color:var(--text);
-  font-size:17px;
+  background:var(--a);
+  width:0%;
+  transition:width .08s linear
 }
 
 .sidebar{
   display:flex;
   flex-direction:column;
-  gap:14px;
+  gap:14px
 }
 
 .card{
-  border:1px solid var(--line);
-  background:var(--panel);
+  background:var(--p);
+  border:1px solid var(--l);
   border-radius:16px;
-  padding:17px;
+  padding:17px
 }
 
 .card h3{
   margin:0 0 13px;
-  font-size:14px;
-}
-
-.upload{
-  display:block;
-  border:1px dashed #46505e;
-  border-radius:12px;
-  padding:18px 12px;
-  text-align:center;
-  color:var(--muted);
-  cursor:pointer;
-}
-
-.upload:hover{
-  border-color:var(--accent);
-  color:var(--text);
-}
-
-.upload strong{
-  display:block;
-  color:var(--text);
-  margin-bottom:5px;
-}
-
-#pdfInput{display:none}
-
-.pdfStatus{
-  margin-top:10px;
-  font-size:12px;
-  color:var(--muted);
-  line-height:1.45;
-}
-
-.pdfStatus.good{color:var(--good)}
-
-.resumeBox{
-  display:none;
-  margin-top:12px;
-  padding:12px;
-  border-radius:11px;
-  background:var(--panel2);
-  border:1px solid var(--line);
-}
-
-.resumeBox strong{
-  display:block;
-  margin-bottom:5px;
-}
-
-.resumeBox p{
-  margin:0 0 10px;
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.45;
+  font-size:14px
 }
 
 textarea{
@@ -278,150 +212,238 @@ textarea{
   min-height:150px;
   resize:vertical;
   background:#0f1217;
-  color:var(--text);
-  border:1px solid var(--line);
+  color:var(--t);
+  border:1px solid var(--l);
   border-radius:10px;
   padding:12px;
-  font-size:14px;
-  line-height:1.5;
+  font:14px/1.5 inherit
 }
 
 .row{
   display:flex;
   gap:8px;
-  margin-top:8px;
+  margin-top:8px
 }
 
-.row>*{flex:1}
+.row>*{
+  flex:1
+}
 
-.field{margin:13px 0}
+.field{
+  margin:12px 0
+}
 
 .field label{
   display:flex;
   justify-content:space-between;
-  margin-bottom:7px;
-  color:var(--muted);
+  color:var(--m);
   font-size:12px;
+  margin-bottom:7px
 }
 
 input[type=range]{
   width:100%;
-  accent-color:var(--accent);
+  accent-color:var(--a)
+}
+
+input[type=text]{
+  width:100%;
+  background:#0f1217;
+  color:var(--t);
+  border:1px solid var(--l);
+  border-radius:10px;
+  padding:10px 11px;
+  outline:none
+}
+
+input[type=text]:focus{
+  border-color:var(--a)
 }
 
 .stats{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:8px;
+  gap:8px
 }
 
 .stat{
-  background:var(--panel2);
+  background:var(--p2);
   border-radius:10px;
-  padding:11px;
+  padding:11px
 }
 
 .stat small{
   display:block;
-  color:var(--muted);
-  font-size:11px;
+  color:var(--m);
+  font-size:11px
 }
 
 .stat strong{
   display:block;
   margin-top:4px;
-  font-size:17px;
-}
-
-.marker{
-  margin-top:10px;
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.5;
+  font-size:18px
 }
 
 .hint{
-  color:var(--muted);
+  color:var(--m);
+  font-size:12px;
+  line-height:1.5
+}
+
+.pdf-status{
+  color:var(--m);
   font-size:12px;
   line-height:1.5;
+  margin-top:9px
 }
 
-.divider{
-  height:1px;
-  background:var(--line);
-  margin:16px 0;
-}
-
-.loading{
-  display:none;
+.pdf-info{
+  background:#11151c;
+  border:1px solid var(--l);
+  border-radius:10px;
+  padding:10px;
   margin-top:10px;
+  font-size:12px;
+  color:var(--m)
 }
 
-.loadingBar{
-  height:5px;
-  background:#292e38;
-  border-radius:999px;
-  overflow:hidden;
+.pdf-info strong{
+  color:var(--t);
+  display:block;
+  margin-bottom:4px
 }
 
-.loadingFill{
-  height:100%;
-  width:0;
-  background:var(--accent);
+.file-label{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  width:100%;
+  padding:11px 12px;
+  border-radius:10px;
+  border:1px dashed #4b5563;
+  background:#11151c;
+  color:var(--t);
+  cursor:pointer;
+  font-weight:650
 }
 
-.loadingText{
-  color:var(--muted);
+.file-label:hover{
+  border-color:var(--a)
+}
+
+.file-label input{
+  display:none
+}
+
+.library-search{
+  margin-bottom:10px
+}
+
+.pdf-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  max-height:310px;
+  overflow-y:auto;
+  padding-right:2px
+}
+
+.pdf-item{
+  background:#11151c;
+  border:1px solid var(--l);
+  border-radius:11px;
+  padding:10px
+}
+
+.pdf-name{
+  font-size:13px;
+  font-weight:700;
+  word-break:break-word;
+  line-height:1.35
+}
+
+.pdf-meta{
+  color:var(--m);
   font-size:11px;
-  margin-top:6px;
+  margin-top:4px
+}
+
+.pdf-progress{
+  height:4px;
+  background:#292e38;
+  border-radius:10px;
+  overflow:hidden;
+  margin:8px 0
+}
+
+.pdf-progress div{
+  height:100%;
+  background:var(--a)
+}
+
+.pdf-actions{
+  display:flex;
+  gap:6px
+}
+
+.pdf-actions button{
+  flex:1;
+  padding:7px 8px;
+  font-size:11px
+}
+
+.empty-library{
+  color:var(--m);
+  font-size:12px;
+  line-height:1.5;
+  text-align:center;
+  padding:12px 4px
+}
+
+.current-pdf{
+  margin-top:8px;
+  color:var(--m);
+  font-size:11px;
+  line-height:1.5
+}
+
+.current-pdf strong{
+  color:var(--t)
 }
 
 @media(max-width:850px){
-
-  header{
-    height:60px;
-    padding:0 14px;
-  }
-
   main{
     grid-template-columns:1fr;
-    padding:12px;
+    padding:12px
   }
 
   .reader{
-    min-height:62vh;
+    min-height:65vh
   }
 
   .sidebar{
-    order:2;
+    order:2
   }
 
   .pill{
-    display:none;
+    display:none
+  }
+
+  .speed{
+    margin-left:0
   }
 
   .stage{
-    min-height:330px;
-    padding:25px 10px;
+    min-height:330px
   }
 
   .word{
-    font-size:clamp(42px,13vw,80px);
+    font-size:clamp(44px,13vw,80px)
   }
 
-  .controls{
-    justify-content:center;
-    padding:12px;
-  }
-
-  .speedDisplay{
-    margin-left:0;
-    width:100%;
-    text-align:center;
-  }
-
-  .documentInfo{
-    padding:9px 12px;
+  .pdf-list{
+    max-height:260px
   }
 }
 </style>
@@ -429,12 +451,14 @@ input[type=range]{
 
 <body>
 
+<div id="app">
+
 <header>
   <div class="logo">Foco<span>.</span></div>
 
   <div class="top">
     <div class="pill">RSVP · lectura rápida</div>
-    <button class="btn" id="clear">Nueva lectura</button>
+    <button class="btn" id="clear">Nuevo</button>
   </div>
 </header>
 
@@ -442,22 +466,16 @@ input[type=range]{
 
 <section class="reader">
 
-  <div class="documentInfo">
-    <strong id="docName">Sin documento</strong>
-    <span class="pageInfo" id="pageInfo">—</span>
-  </div>
-
   <div class="stage">
-
-    <div class="focusLine" id="focusLine"></div>
+    <div class="focus"></div>
 
     <div id="word" class="word">
       <div class="empty">
-        <strong>Bienvenido a Foco.</strong><br>
-        Cargá un PDF o pegá un texto para comenzar.
+        <strong>Cargá un texto o PDF para empezar.</strong>
+        <br>
+        La palabra aparecerá en el centro y la letra de referencia quedará fija.
       </div>
     </div>
-
   </div>
 
   <div class="progress">
@@ -465,103 +483,85 @@ input[type=range]{
   </div>
 
   <div class="controls">
-
     <button class="btn" id="back">↶ 10</button>
-
-    <button class="btn primary" id="play">
-      ▶ Iniciar
-    </button>
-
+    <button class="btn primary" id="play">▶ Iniciar</button>
     <button class="btn" id="next">10 ↷</button>
 
     <button class="btn" id="slower">−</button>
-
     <button class="btn" id="faster">+</button>
 
-    <div class="speedDisplay">
+    <div class="speed">
       <b id="speedOut">300</b> ppm
     </div>
-
   </div>
 
 </section>
 
 <aside class="sidebar">
 
+  <!-- PDF -->
   <div class="card">
 
-    <h3>📄 Abrir PDF</h3>
+    <h3>📄 PDF</h3>
 
-    <label class="upload" for="pdfInput">
-      <strong>Seleccionar PDF</strong>
-      Tocá acá para elegir un archivo
+    <label class="file-label">
+      <span>Seleccionar PDF</span>
+      <input id="pdfInput" type="file" accept="application/pdf">
     </label>
 
+    <div id="pdfStatus" class="pdf-status">
+      Los PDFs se procesan directamente en tu dispositivo.
+    </div>
+
+    <div id="pdfInfo" class="pdf-info" style="display:none"></div>
+
+  </div>
+
+  <!-- MIS PDF -->
+  <div class="card">
+
+    <h3>📚 Mis PDFs</h3>
+
     <input
-      id="pdfInput"
-      type="file"
-      accept="application/pdf,.pdf"
+      id="pdfSearch"
+      class="library-search"
+      type="text"
+      placeholder="Buscar PDF..."
     >
 
-    <div class="loading" id="loading">
-      <div class="loadingBar">
-        <div class="loadingFill" id="loadingFill"></div>
+    <div id="pdfList" class="pdf-list">
+      <div class="empty-library">
+        Todavía no tenés PDFs guardados.
+        <br>
+        Seleccioná un PDF arriba para agregarlo.
       </div>
-      <div class="loadingText" id="loadingText">
-        Leyendo PDF...
-      </div>
-    </div>
-
-    <div class="pdfStatus" id="pdfStatus">
-      El PDF se procesa en este dispositivo.
-    </div>
-
-    <div class="resumeBox" id="resumeBox">
-
-      <strong>📍 Lectura encontrada</strong>
-
-      <p id="resumeText"></p>
-
-      <div class="row">
-        <button class="btn primary" id="resumeBtn">
-          Continuar
-        </button>
-
-        <button class="btn" id="restartBtn">
-          Desde inicio
-        </button>
-      </div>
-
     </div>
 
   </div>
 
+  <!-- TEXTO -->
   <div class="card">
 
-    <h3>📝 Texto manual</h3>
+    <h3>Texto</h3>
 
     <textarea
       id="text"
-      placeholder="También podés pegar acá un artículo, apuntes o cualquier texto..."></textarea>
+      placeholder="Pegá acá un artículo, apuntes, un capítulo…"
+    ></textarea>
 
     <div class="row">
-      <button class="btn primary" id="load">
-        Cargar texto
-      </button>
-
-      <button class="btn" id="sample">
-        Ejemplo
-      </button>
+      <button class="btn primary" id="load">Cargar texto</button>
+      <button class="btn" id="sample">Ejemplo</button>
     </div>
 
   </div>
 
+  <!-- LECTURA -->
   <div class="card">
 
     <h3>Lectura</h3>
 
     <div class="field">
-
       <label>
         Velocidad
         <output id="speedLabel">300 ppm</output>
@@ -573,12 +573,11 @@ input[type=range]{
         min="100"
         max="1000"
         step="10"
-        value="300">
-
+        value="300"
+      >
     </div>
 
     <div class="field">
-
       <label>
         Tamaño
         <output id="sizeLabel">76 px</output>
@@ -590,8 +589,8 @@ input[type=range]{
         min="42"
         max="120"
         step="2"
-        value="76">
-
+        value="76"
+      >
     </div>
 
     <div class="field">
@@ -604,7 +603,8 @@ input[type=range]{
       <button
         class="btn"
         id="toggleFocus"
-        style="width:100%">
+        style="width:100%"
+      >
         Cambiar enfoque
       </button>
 
@@ -612,6 +612,7 @@ input[type=range]{
 
   </div>
 
+  <!-- PROGRESO -->
   <div class="card">
 
     <h3>Progreso</h3>
@@ -624,30 +625,16 @@ input[type=range]{
       </div>
 
       <div class="stat">
-        <small>Progreso</small>
-        <strong id="percent">0%</strong>
-      </div>
-
-      <div class="stat">
-        <small>Página</small>
-        <strong id="pageStat">—</strong>
-      </div>
-
-      <div class="stat">
-        <small>Restante</small>
+        <small>Tiempo</small>
         <strong id="time">0:00</strong>
       </div>
 
     </div>
 
-    <div class="marker" id="markerInfo">
-      📍 El progreso del PDF se guardará automáticamente.
-    </div>
-
-    <div class="divider"></div>
+    <div id="currentPdf" class="current-pdf"></div>
 
     <p class="hint">
-      Espacio = pausa · ←/→ = palabra anterior/siguiente · ↑/↓ = velocidad.
+      Atajos: espacio = pausa · ←/→ = retroceder/avanzar · ↑/↓ = velocidad.
     </p>
 
   </div>
@@ -655,56 +642,253 @@ input[type=range]{
 </aside>
 
 </main>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</div>
 
 <script>
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
-"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
-const $ = selector => document.querySelector(selector);
+
+/* =========================================================
+   ELEMENTOS
+========================================================= */
+
+const $ = s => document.querySelector(s);
+
+
+/* =========================================================
+   ESTADO DEL LECTOR
+========================================================= */
 
 let words = [];
 let wordPages = [];
 
-let index = 0;
+let i = 0;
+
 let timer = null;
 let playing = false;
 
 let speed = 300;
 let focus = true;
 
-let documentType = null;
-let currentPDFKey = null;
-let currentPDFName = null;
-let totalPages = 0;
+let currentPDF = null;
 
-let pendingSavedIndex = 0;
+let saveProgressTimer = null;
 
-const sampleText =
-`La lectura rápida no consiste simplemente en hacer que las palabras pasen cada vez más rápido. El objetivo es encontrar una velocidad en la que los ojos puedan fijarse con precisión y el cerebro todavía tenga tiempo suficiente para construir significado. La presentación serial de palabras elimina parte del movimiento ocular que normalmente hacemos al recorrer una línea, y por eso puede resultar sorprendentemente cómoda después de unos minutos de adaptación.`;
 
-function cleanText(text){
+/* =========================================================
+   TEXTO DE EJEMPLO
+========================================================= */
+
+const samples = `
+La lectura rápida no consiste simplemente en hacer que las palabras pasen cada vez más rápido.
+
+El objetivo es encontrar una velocidad en la que los ojos puedan fijarse con precisión y el cerebro todavía tenga tiempo suficiente para construir significado.
+
+La presentación serial de palabras elimina parte del movimiento ocular que normalmente hacemos al recorrer una línea, y por eso puede resultar sorprendentemente cómoda después de unos minutos de adaptación.
+
+La clave no es leer lo más rápido posible.
+
+La clave es encontrar la velocidad máxima en la que todavía comprendemos correctamente el contenido.
+`;
+
+
+/* =========================================================
+   INDEXEDDB
+========================================================= */
+
+const DB_NAME = "foco_db";
+const DB_VERSION = 1;
+
+let db = null;
+
+
+function openDB(){
+
+  return new Promise((resolve,reject)=>{
+
+    const request = indexedDB.open(DB_NAME,DB_VERSION);
+
+    request.onupgradeneeded = event => {
+
+      const database = event.target.result;
+
+      if(!database.objectStoreNames.contains("pdfs")){
+
+        database.createObjectStore("pdfs",{
+          keyPath:"id"
+        });
+
+      }
+
+      if(!database.objectStoreNames.contains("progress")){
+
+        database.createObjectStore("progress",{
+          keyPath:"id"
+        });
+
+      }
+
+    };
+
+    request.onsuccess = event => {
+
+      db = event.target.result;
+
+      resolve(db);
+
+    };
+
+    request.onerror = () => {
+
+      reject(request.error);
+
+    };
+
+  });
+
+}
+
+
+function dbPut(storeName,data){
+
+  return new Promise((resolve,reject)=>{
+
+    const transaction = db.transaction(storeName,"readwrite");
+
+    const store = transaction.objectStore(storeName);
+
+    const request = store.put(data);
+
+    request.onsuccess = () => resolve();
+
+    request.onerror = () => reject(request.error);
+
+  });
+
+}
+
+
+function dbGet(storeName,id){
+
+  return new Promise((resolve,reject)=>{
+
+    const transaction = db.transaction(storeName,"readonly");
+
+    const store = transaction.objectStore(storeName);
+
+    const request = store.get(id);
+
+    request.onsuccess = () => resolve(request.result);
+
+    request.onerror = () => reject(request.error);
+
+  });
+
+}
+
+
+function dbGetAll(storeName){
+
+  return new Promise((resolve,reject)=>{
+
+    const transaction = db.transaction(storeName,"readonly");
+
+    const store = transaction.objectStore(storeName);
+
+    const request = store.getAll();
+
+    request.onsuccess = () => resolve(request.result || []);
+
+    request.onerror = () => reject(request.error);
+
+  });
+
+}
+
+
+function dbDelete(storeName,id){
+
+  return new Promise((resolve,reject)=>{
+
+    const transaction = db.transaction(storeName,"readwrite");
+
+    const store = transaction.objectStore(storeName);
+
+    const request = store.delete(id);
+
+    request.onsuccess = () => resolve();
+
+    request.onerror = () => reject(request.error);
+
+  });
+
+}
+
+
+/* =========================================================
+   UTILIDADES
+========================================================= */
+
+function clean(text){
+
   return text
     .replace(/\s+/g," ")
     .trim();
+
 }
 
-function escapeHTML(text){
-  const div = document.createElement("div");
-  div.textContent = text;
-  return div.innerHTML;
+
+function formatSize(bytes){
+
+  if(bytes < 1024){
+
+    return bytes + " B";
+
+  }
+
+  if(bytes < 1024 * 1024){
+
+    return (bytes / 1024).toFixed(1) + " KB";
+
+  }
+
+  return (bytes / 1024 / 1024).toFixed(1) + " MB";
+
 }
+
+
+function createPDFId(file){
+
+  return [
+    file.name,
+    file.size,
+    file.lastModified
+  ].join("|");
+
+}
+
+
+/* =========================================================
+   RSVP
+========================================================= */
 
 function pivotHTML(word){
 
-  const safe = escapeHTML(word);
+  if(!focus){
 
-  if(!focus || !word.length)
-    return safe;
+    return word;
 
-  let position = Math.max(
+  }
+
+  if(!word.length){
+
+    return "";
+
+  }
+
+  const p = Math.max(
     0,
     Math.min(
       word.length - 1,
@@ -713,668 +897,972 @@ function pivotHTML(word){
   );
 
   return (
-    escapeHTML(word.slice(0,position)) +
+    word.slice(0,p) +
     '<span class="pivot">' +
-    escapeHTML(word[position]) +
-    '</span>' +
-    escapeHTML(word.slice(position + 1))
+    word[p] +
+    "</span>" +
+    word.slice(p + 1)
   );
+
 }
 
-function currentPage(){
-
-  if(
-    documentType !== "pdf" ||
-    !wordPages.length
-  ){
-    return null;
-  }
-
-  return wordPages[index] || 1;
-}
 
 function render(){
 
-  if(!words.length)
+  if(!words.length){
+
     return;
 
-  $("#word").innerHTML =
-    pivotHTML(words[index]);
-
-  $("#count").textContent =
-    `${index + 1} / ${words.length}`;
-
-  const progress =
-    ((index + 1) / words.length) * 100;
-
-  $("#bar").style.width =
-    progress + "%";
-
-  $("#percent").textContent =
-    Math.floor(progress) + "%";
-
-  const page = currentPage();
-
-  if(page){
-
-    $("#pageInfo").textContent =
-      `Página ${page} de ${totalPages}`;
-
-    $("#pageStat").textContent =
-      `${page}/${totalPages}`;
-
-  }else{
-
-    $("#pageInfo").textContent =
-      "Texto";
-
-    $("#pageStat").textContent =
-      "—";
   }
 
-  updateTime();
+  $('#word').innerHTML = pivotHTML(words[i]);
 
-  if(documentType === "pdf")
-    saveProgress();
+  $('#count').textContent =
+    `${i + 1} / ${words.length}`;
+
+  $('#bar').style.width =
+    ((i + 1) / words.length * 100) + "%";
+
+  updateCurrentPDFInfo();
+
 }
 
-function punctuationDelay(word){
-
-  const base = 60000 / speed;
-
-  if(/[.!?…]["')\]]?$/.test(word))
-    return base * 1.8;
-
-  if(/[,;:]["')\]]?$/.test(word))
-    return base * 1.35;
-
-  return base;
-}
 
 function loop(){
 
-  if(!playing)
+  if(!playing){
+
     return;
 
-  const delay =
-    punctuationDelay(words[index] || "");
+  }
 
-  timer = setTimeout(() => {
+  timer = setTimeout(()=>{
 
-    if(index >= words.length - 1){
+    if(i >= words.length - 1){
 
       playing = false;
 
-      $("#play").textContent =
-        "▶ Reiniciar";
+      $('#play').textContent = "▶ Reiniciar";
 
       saveProgress();
 
       return;
+
     }
 
-    index++;
+    i++;
 
     render();
+
     loop();
 
-  },delay);
+  },60000 / speed);
+
 }
+
 
 function toggle(){
 
-  if(!words.length)
+  if(!words.length){
+
     return;
 
-  if(index >= words.length - 1)
-    index = 0;
+  }
+
+  if(i >= words.length - 1){
+
+    i = 0;
+
+  }
 
   playing = !playing;
 
-  $("#play").textContent =
-    playing
-      ? "⏸ Pausar"
-      : "▶ Continuar";
+  $('#play').textContent =
+    playing ? "⏸ Pausar" : "▶ Continuar";
 
   clearTimeout(timer);
 
-  if(playing)
+  if(playing){
+
     loop();
 
-  saveProgress();
-}
-
-function updateTime(){
-
-  if(!words.length){
-
-    $("#time").textContent = "0:00";
-    return;
   }
 
-  const remaining =
-    Math.max(0,words.length - index - 1);
+  saveProgress();
 
-  const seconds =
-    Math.ceil(remaining / speed * 60);
-
-  const minutes =
-    Math.floor(seconds / 60);
-
-  const secs =
-    String(seconds % 60).padStart(2,"0");
-
-  $("#time").textContent =
-    `${minutes}:${secs}`;
 }
+
+
+function loadText(){
+
+  const text = clean($('#text').value);
+
+  if(!text){
+
+    return;
+
+  }
+
+  clearTimeout(timer);
+
+  playing = false;
+
+  words = text.split(" ");
+
+  wordPages = [];
+
+  i = 0;
+
+  currentPDF = null;
+
+  $('#play').textContent = "▶ Iniciar";
+
+  $('#pdfInfo').style.display = "none";
+
+  $('#currentPdf').innerHTML = "";
+
+  render();
+
+  updateTime();
+
+}
+
+
+/* =========================================================
+   VELOCIDAD
+========================================================= */
 
 function setSpeed(value){
 
   speed = Number(value);
 
-  $("#speed").value = speed;
+  $('#speed').value = speed;
 
-  $("#speedOut").textContent =
-    speed;
+  $('#speedOut').textContent = speed;
 
-  $("#speedLabel").textContent =
+  $('#speedLabel').textContent =
     speed + " ppm";
-
-  updateTime();
 
   if(playing){
 
     clearTimeout(timer);
+
     loop();
-  }
-}
 
-function stopReading(){
-
-  playing = false;
-  clearTimeout(timer);
-
-  $("#play").textContent =
-    "▶ Iniciar";
-}
-
-function loadManualText(){
-
-  const text =
-    cleanText($("#text").value);
-
-  if(!text)
-    return;
-
-  stopReading();
-
-  words =
-    text.split(" ").filter(Boolean);
-
-  wordPages = [];
-
-  index = 0;
-
-  documentType = "text";
-  currentPDFKey = null;
-  currentPDFName = null;
-  totalPages = 0;
-
-  $("#docName").textContent =
-    "Texto manual";
-
-  $("#resumeBox").style.display =
-    "none";
-
-  render();
-}
-
-function createPDFKey(file){
-
-  return (
-    "foco_pdf_" +
-    encodeURIComponent(
-      file.name +
-      "_" +
-      file.size +
-      "_" +
-      file.lastModified
-    )
-  );
-}
-
-function saveProgress(){
-
-  if(
-    documentType !== "pdf" ||
-    !currentPDFKey ||
-    !words.length
-  ){
-    return;
   }
 
-  const data = {
-    name:currentPDFName,
-    index:index,
-    page:currentPage(),
-    totalPages:totalPages,
-    totalWords:words.length,
-    updatedAt:Date.now()
+}
+
+
+function updateTime(){
+
+  if(!words.length){
+
+    $('#time').textContent = "0:00";
+
+    return;
+
+  }
+
+  const seconds =
+    Math.ceil(words.length / speed * 60);
+
+  $('#time').textContent =
+    `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2,"0")}`;
+
+}
+
+
+/* =========================================================
+   PDF
+========================================================= */
+
+async function extractPDF(file){
+
+  $('#pdfStatus').textContent =
+    "Leyendo PDF…";
+
+  const buffer = await file.arrayBuffer();
+
+  const pdf = await pdfjsLib
+    .getDocument({
+      data:buffer
+    })
+    .promise;
+
+  let allText = [];
+  let pages = [];
+
+  for(let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++){
+
+    $('#pdfStatus').textContent =
+      `Procesando página ${pageNumber} de ${pdf.numPages}…`;
+
+    const page = await pdf.getPage(pageNumber);
+
+    const content =
+      await page.getTextContent();
+
+    const pageText =
+      content.items
+        .map(item => item.str)
+        .join(" ");
+
+    const cleaned =
+      clean(pageText);
+
+    if(cleaned){
+
+      const pageWords =
+        cleaned.split(" ");
+
+      for(let j = 0; j < pageWords.length; j++){
+
+        allText.push(pageWords[j]);
+
+        pages.push(pageNumber);
+
+      }
+
+    }
+
+  }
+
+  return {
+    words:allText,
+    wordPages:pages,
+    totalPages:pdf.numPages,
+    buffer
   };
 
+}
+
+
+async function handlePDF(file){
+
+  if(!file){
+
+    return;
+
+  }
+
+  if(file.type !== "application/pdf"){
+
+    alert("Por favor seleccioná un archivo PDF.");
+
+    return;
+
+  }
+
   try{
 
-    localStorage.setItem(
-      currentPDFKey,
-      JSON.stringify(data)
+    $('#pdfStatus').textContent =
+      "Comprobando biblioteca…";
+
+    const id = createPDFId(file);
+
+    const existing =
+      await dbGet("pdfs",id);
+
+    if(existing){
+
+      const shouldContinue =
+        confirm(
+          `Este PDF ya está guardado.\n\n¿Querés continuar desde donde lo dejaste?\n\nAceptar = continuar\nCancelar = empezar desde el inicio`
+        );
+
+      await openStoredPDF(
+        existing,
+        shouldContinue
+      );
+
+      return;
+
+    }
+
+    const extracted =
+      await extractPDF(file);
+
+    if(!extracted.words.length){
+
+      alert(
+        "No pude encontrar texto en este PDF. Si es un PDF escaneado como imagen, todavía no tenemos OCR."
+      );
+
+      $('#pdfStatus').textContent =
+        "No se encontró texto en el PDF.";
+
+      return;
+
+    }
+
+    const record = {
+
+      id,
+
+      name:file.name,
+
+      size:file.size,
+
+      lastModified:file.lastModified,
+
+      file:new Blob(
+        [extracted.buffer],
+        {type:"application/pdf"}
+      ),
+
+      words:extracted.words,
+
+      wordPages:extracted.wordPages,
+
+      totalPages:extracted.totalPages,
+
+      createdAt:Date.now()
+
+    };
+
+    await dbPut("pdfs",record);
+
+    await dbPut("progress",{
+
+      id,
+
+      index:0,
+
+      page:1,
+
+      updatedAt:Date.now()
+
+    });
+
+    await openStoredPDF(
+      record,
+      false
     );
 
-    $("#markerInfo").textContent =
-      `📍 Guardado · página ${data.page} · ${Math.floor(((index+1)/words.length)*100)}%`;
+    $('#pdfStatus').textContent =
+      "PDF guardado en Mis PDFs.";
 
-  }catch(error){
-
-    $("#markerInfo").textContent =
-      "No se pudo guardar el marcador.";
-  }
-}
-
-function getSavedProgress(key){
-
-  try{
-
-    const raw =
-      localStorage.getItem(key);
-
-    if(!raw)
-      return null;
-
-    return JSON.parse(raw);
-
-  }catch(error){
-
-    return null;
-  }
-}
-
-async function loadPDF(file){
-
-  if(!file)
-    return;
-
-  if(
-    file.type !== "application/pdf" &&
-    !file.name.toLowerCase().endsWith(".pdf")
-  ){
-
-    $("#pdfStatus").textContent =
-      "Ese archivo no parece ser un PDF.";
-
-    return;
-  }
-
-  stopReading();
-
-  $("#resumeBox").style.display =
-    "none";
-
-  $("#loading").style.display =
-    "block";
-
-  $("#loadingFill").style.width =
-    "0%";
-
-  $("#loadingText").textContent =
-    "Abriendo PDF...";
-
-  $("#pdfStatus").classList.remove("good");
-
-  $("#pdfStatus").textContent =
-    "Procesando el PDF en este dispositivo...";
-
-  try{
-
-    const buffer =
-      await file.arrayBuffer();
-
-    const pdf =
-      await pdfjsLib.getDocument({
-        data:buffer
-      }).promise;
-
-    totalPages =
-      pdf.numPages;
-
-    const extractedWords = [];
-    const extractedPages = [];
-
-    for(
-      let pageNumber = 1;
-      pageNumber <= totalPages;
-      pageNumber++
-    ){
-
-      $("#loadingText").textContent =
-        `Leyendo página ${pageNumber} de ${totalPages}...`;
-
-      $("#loadingFill").style.width =
-        ((pageNumber / totalPages) * 100) + "%";
-
-      const page =
-        await pdf.getPage(pageNumber);
-
-      const content =
-        await page.getTextContent();
-
-      const pageText =
-        cleanText(
-          content.items
-            .map(item => item.str)
-            .join(" ")
-        );
-
-      if(pageText){
-
-        const pageWords =
-          pageText
-            .split(" ")
-            .filter(Boolean);
-
-        for(const word of pageWords){
-
-          extractedWords.push(word);
-          extractedPages.push(pageNumber);
-        }
-      }
-    }
-
-    if(!extractedWords.length){
-
-      throw new Error(
-        "NO_TEXT"
-      );
-    }
-
-    words =
-      extractedWords;
-
-    wordPages =
-      extractedPages;
-
-    index = 0;
-
-    documentType =
-      "pdf";
-
-    currentPDFName =
-      file.name;
-
-    currentPDFKey =
-      createPDFKey(file);
-
-    $("#docName").textContent =
-      file.name;
-
-    $("#text").value = "";
-
-    $("#pdfStatus").classList.add("good");
-
-    $("#pdfStatus").textContent =
-      `✓ ${totalPages} páginas · ${words.length.toLocaleString("es-AR")} palabras`;
-
-    const saved =
-      getSavedProgress(currentPDFKey);
-
-    if(
-      saved &&
-      Number.isInteger(saved.index) &&
-      saved.index > 0 &&
-      saved.index < words.length
-    ){
-
-      pendingSavedIndex =
-        saved.index;
-
-      const savedPercent =
-        Math.floor(
-          ((saved.index + 1) / words.length) * 100
-        );
-
-      $("#resumeText").textContent =
-        `Quedaste en la página ${saved.page || "—"} de ${totalPages} · ${savedPercent}% del documento.`;
-
-      $("#resumeBox").style.display =
-        "block";
-
-      index = 0;
-
-    }else{
-
-      $("#resumeBox").style.display =
-        "none";
-    }
-
-    render();
+    await renderPDFLibrary();
 
   }catch(error){
 
     console.error(error);
 
-    words = [];
-    wordPages = [];
+    $('#pdfStatus').textContent =
+      "No se pudo procesar el PDF.";
 
-    $("#docName").textContent =
-      "Sin documento";
+    alert(
+      "No se pudo procesar el PDF. Puede que sea demasiado grande o que el navegador haya bloqueado el almacenamiento."
+    );
 
-    $("#pageInfo").textContent =
-      "—";
-
-    $("#pdfStatus").classList.remove("good");
-
-    if(error.message === "NO_TEXT"){
-
-      $("#pdfStatus").textContent =
-        "Este PDF no contiene texto extraíble. Probablemente sea un documento escaneado.";
-
-    }else{
-
-      $("#pdfStatus").textContent =
-        "No pude leer este PDF. Probá con otro archivo.";
-    }
-
-  }finally{
-
-    $("#loading").style.display =
-      "none";
   }
+
 }
+
+
+/* =========================================================
+   ABRIR PDF GUARDADO
+========================================================= */
+
+async function openStoredPDF(record,continueReading){
+
+  clearTimeout(timer);
+
+  playing = false;
+
+  currentPDF = record;
+
+  words = record.words || [];
+
+  wordPages = record.wordPages || [];
+
+  if(!words.length){
+
+    alert("Este PDF no tiene texto disponible.");
+
+    return;
+
+  }
+
+  let progress =
+    await dbGet("progress",record.id);
+
+  if(!progress){
+
+    progress = {
+
+      id:record.id,
+
+      index:0,
+
+      page:1,
+
+      updatedAt:Date.now()
+
+    };
+
+  }
+
+  if(continueReading){
+
+    i = Math.max(
+      0,
+      Math.min(
+        words.length - 1,
+        progress.index || 0
+      )
+    );
+
+  }else{
+
+    i = 0;
+
+    progress.index = 0;
+
+    progress.page = 1;
+
+    progress.updatedAt = Date.now();
+
+    await dbPut(
+      "progress",
+      progress
+    );
+
+  }
+
+  $('#play').textContent =
+    "▶ Iniciar";
+
+  $('#text').value = "";
+
+  $('#pdfStatus').textContent =
+    "PDF listo para leer.";
+
+  showPDFInfo();
+
+  render();
+
+  updateTime();
+
+}
+
+
+/* =========================================================
+   INFORMACIÓN DEL PDF ACTUAL
+========================================================= */
+
+function updateCurrentPDFInfo(){
+
+  if(!currentPDF){
+
+    $('#currentPdf').innerHTML = "";
+
+    return;
+
+  }
+
+  const page =
+    wordPages[i] || 1;
+
+  $('#currentPdf').innerHTML =
+    `<strong>${escapeHTML(currentPDF.name)}</strong><br>Página ${page} de ${currentPDF.totalPages}`;
+
+}
+
+
+function showPDFInfo(){
+
+  if(!currentPDF){
+
+    $('#pdfInfo').style.display = "none";
+
+    return;
+
+  }
+
+  $('#pdfInfo').style.display = "block";
+
+  const page =
+    wordPages[i] || 1;
+
+  $('#pdfInfo').innerHTML =
+    `<strong>${escapeHTML(currentPDF.name)}</strong>
+     Página ${page} de ${currentPDF.totalPages}
+     · ${formatSize(currentPDF.size)}`;
+
+}
+
+
+function escapeHTML(text){
+
+  return String(text)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+}
+
+
+/* =========================================================
+   GUARDAR PROGRESO
+========================================================= */
+
+function scheduleSaveProgress(){
+
+  if(!currentPDF){
+
+    return;
+
+  }
+
+  clearTimeout(saveProgressTimer);
+
+  saveProgressTimer =
+    setTimeout(
+      saveProgress,
+      1500
+    );
+
+}
+
+
+async function saveProgress(){
+
+  if(!currentPDF){
+
+    return;
+
+  }
+
+  try{
+
+    const page =
+      wordPages[i] || 1;
+
+    await dbPut(
+      "progress",
+      {
+
+        id:currentPDF.id,
+
+        index:i,
+
+        page,
+
+        updatedAt:Date.now()
+
+      }
+    );
+
+    renderPDFLibrary();
+
+  }catch(error){
+
+    console.error(
+      "No se pudo guardar el progreso:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   BIBLIOTECA
+========================================================= */
+
+async function renderPDFLibrary(){
+
+  const list =
+    $('#pdfList');
+
+  const records =
+    await dbGetAll("pdfs");
+
+  const search =
+    $('#pdfSearch').value
+      .trim()
+      .toLowerCase();
+
+  const filtered =
+    records
+      .filter(pdf =>
+        pdf.name
+          .toLowerCase()
+          .includes(search)
+      )
+      .sort(
+        (a,b)=>
+          (b.createdAt || 0) -
+          (a.createdAt || 0)
+      );
+
+  if(!filtered.length){
+
+    list.innerHTML =
+      records.length
+        ? `<div class="empty-library">No encontré PDFs con ese nombre.</div>`
+        : `<div class="empty-library">
+             Todavía no tenés PDFs guardados.
+             <br>
+             Seleccioná un PDF arriba para agregarlo.
+           </div>`;
+
+    return;
+
+  }
+
+  list.innerHTML = "";
+
+  for(const pdf of filtered){
+
+    const progress =
+      await dbGet(
+        "progress",
+        pdf.id
+      );
+
+    const index =
+      progress?.index || 0;
+
+    const percent =
+      pdf.words.length
+        ? Math.round(
+            ((index + 1) /
+            pdf.words.length) * 100
+          )
+        : 0;
+
+    const page =
+      progress?.page || 1;
+
+    const item =
+      document.createElement("div");
+
+    item.className =
+      "pdf-item";
+
+    item.innerHTML = `
+
+      <div class="pdf-name">
+        ${escapeHTML(pdf.name)}
+      </div>
+
+      <div class="pdf-meta">
+        Página ${page} de ${pdf.totalPages}
+        · ${percent}% leído
+        · ${formatSize(pdf.size)}
+      </div>
+
+      <div class="pdf-progress">
+        <div style="width:${percent}%"></div>
+      </div>
+
+      <div class="pdf-actions">
+
+        <button
+          class="btn primary continue-btn"
+        >
+          ${percent > 0 ? "Continuar" : "Abrir"}
+        </button>
+
+        <button
+          class="btn restart-btn"
+        >
+          Inicio
+        </button>
+
+        <button
+          class="btn danger delete-btn"
+        >
+          🗑
+        </button>
+
+      </div>
+    `;
+
+    item
+      .querySelector(".continue-btn")
+      .onclick = async ()=>{
+
+        await openStoredPDF(
+          pdf,
+          true
+        );
+
+      };
+
+    item
+      .querySelector(".restart-btn")
+      .onclick = async ()=>{
+
+        await openStoredPDF(
+          pdf,
+          false
+        );
+
+      };
+
+    item
+      .querySelector(".delete-btn")
+      .onclick = async ()=>{
+
+        const ok =
+          confirm(
+            `¿Eliminar "${pdf.name}" de Mis PDFs?\n\nEl archivo se eliminará de este dispositivo.`
+          );
+
+        if(!ok){
+
+          return;
+
+        }
+
+        await dbDelete(
+          "pdfs",
+          pdf.id
+        );
+
+        await dbDelete(
+          "progress",
+          pdf.id
+        );
+
+        if(
+          currentPDF &&
+          currentPDF.id === pdf.id
+        ){
+
+          clearReader();
+
+        }
+
+        await renderPDFLibrary();
+
+      };
+
+    list.appendChild(item);
+
+  }
+
+}
+
+
+/* =========================================================
+   LIMPIAR LECTOR
+========================================================= */
 
 function clearReader(){
 
-  stopReading();
+  clearTimeout(timer);
 
-  saveProgress();
+  playing = false;
 
   words = [];
+
   wordPages = [];
 
-  index = 0;
+  i = 0;
 
-  documentType = null;
-  currentPDFKey = null;
-  currentPDFName = null;
-  totalPages = 0;
+  currentPDF = null;
 
-  $("#text").value = "";
-  $("#pdfInput").value = "";
+  $('#text').value = "";
 
-  $("#docName").textContent =
-    "Sin documento";
+  $('#pdfInput').value = "";
 
-  $("#pageInfo").textContent =
-    "—";
+  $('#pdfInfo').style.display = "none";
 
-  $("#count").textContent =
+  $('#pdfStatus').textContent =
+    "Los PDFs se procesan directamente en tu dispositivo.";
+
+  $('#currentPdf').innerHTML = "";
+
+  $('#play').textContent =
+    "▶ Iniciar";
+
+  $('#bar').style.width =
+    "0%";
+
+  $('#count').textContent =
     "0 / 0";
 
-  $("#percent").textContent =
-    "0%";
-
-  $("#pageStat").textContent =
-    "—";
-
-  $("#time").textContent =
+  $('#time').textContent =
     "0:00";
 
-  $("#bar").style.width =
-    "0%";
+  $('#word').innerHTML =
+    `<div class="empty">
+       <strong>Cargá un texto o PDF para empezar.</strong>
+       <br>
+       La palabra aparecerá en el centro y la letra de referencia quedará fija.
+     </div>`;
 
-  $("#resumeBox").style.display =
-    "none";
-
-  $("#pdfStatus").classList.remove("good");
-
-  $("#pdfStatus").textContent =
-    "El PDF se procesa en este dispositivo.";
-
-  $("#markerInfo").textContent =
-    "📍 El progreso del PDF se guardará automáticamente.";
-
-  $("#word").innerHTML =
-    '<div class="empty"><strong>Bienvenido a Foco.</strong><br>Cargá un PDF o pegá un texto para comenzar.</div>';
 }
 
-$("#pdfInput").addEventListener(
+
+/* =========================================================
+   EVENTOS
+========================================================= */
+
+$('#load').onclick =
+  loadText;
+
+
+$('#sample').onclick = ()=>{
+
+  $('#text').value =
+    samples;
+
+  loadText();
+
+};
+
+
+$('#pdfInput').addEventListener(
   "change",
   event => {
 
     const file =
       event.target.files[0];
 
-    loadPDF(file);
+    handlePDF(file);
+
   }
 );
 
-$("#resumeBtn").onclick = () => {
 
-  index =
-    Math.min(
-      pendingSavedIndex,
-      words.length - 1
-    );
+$('#pdfSearch').addEventListener(
+  "input",
+  renderPDFLibrary
+);
 
-  $("#resumeBox").style.display =
-    "none";
 
-  render();
-
-  $("#play").textContent =
-    "▶ Continuar";
-};
-
-$("#restartBtn").onclick = () => {
-
-  index = 0;
-
-  $("#resumeBox").style.display =
-    "none";
-
-  render();
-
-  saveProgress();
-};
-
-$("#load").onclick =
-  loadManualText;
-
-$("#sample").onclick = () => {
-
-  $("#text").value =
-    sampleText;
-
-  loadManualText();
-};
-
-$("#clear").onclick =
+$('#clear').onclick =
   clearReader;
 
-$("#play").onclick =
+
+$('#play').onclick =
   toggle;
 
-$("#back").onclick = () => {
 
-  if(!words.length)
+$('#back').onclick = ()=>{
+
+  if(!words.length){
+
     return;
 
-  index =
-    Math.max(0,index - 10);
+  }
 
-  render();
-};
-
-$("#next").onclick = () => {
-
-  if(!words.length)
-    return;
-
-  index =
-    Math.min(
-      words.length - 1,
-      index + 10
+  i =
+    Math.max(
+      0,
+      i - 10
     );
 
   render();
+
+  scheduleSaveProgress();
+
 };
 
-$("#slower").onclick = () => {
+
+$('#next').onclick = ()=>{
+
+  if(!words.length){
+
+    return;
+
+  }
+
+  i =
+    Math.min(
+      words.length - 1,
+      i + 10
+    );
+
+  render();
+
+  scheduleSaveProgress();
+
+};
+
+
+$('#slower').onclick = ()=>{
 
   setSpeed(
-    Math.max(100,speed - 25)
+    Math.max(
+      100,
+      speed - 25
+    )
   );
+
+  updateTime();
+
 };
 
-$("#faster").onclick = () => {
+
+$('#faster').onclick = ()=>{
 
   setSpeed(
-    Math.min(1000,speed + 25)
+    Math.min(
+      1000,
+      speed + 25
+    )
   );
+
+  updateTime();
+
 };
 
-$("#speed").oninput = event => {
+
+$('#speed').oninput = event =>{
 
   setSpeed(
     event.target.value
   );
+
+  updateTime();
+
 };
 
-$("#size").oninput = event => {
 
-  const size =
-    event.target.value;
+$('#size').oninput = event =>{
 
-  $("#word").style.fontSize =
-    size + "px";
+  $('#word').style.fontSize =
+    event.target.value + "px";
 
-  $("#sizeLabel").textContent =
-    size + " px";
+  $('#sizeLabel').textContent =
+    event.target.value + " px";
+
 };
 
-$("#toggleFocus").onclick = () => {
 
-  focus = !focus;
+$('#toggleFocus').onclick = ()=>{
 
-  $("#focusLabel").textContent =
+  focus =
+    !focus;
+
+  $('#focusLabel').textContent =
     focus
       ? "activado"
       : "desactivado";
 
-  $("#focusLine").style.opacity =
+  $('.focus').style.opacity =
     focus
-      ? ".25"
+      ? ".35"
       : "0";
 
   render();
+
 };
+
+
+/* =========================================================
+   TECLADO
+========================================================= */
 
 document.addEventListener(
   "keydown",
@@ -1384,64 +1872,160 @@ document.addEventListener(
       event.target.tagName === "TEXTAREA" ||
       event.target.tagName === "INPUT"
     ){
+
       return;
+
     }
 
     if(event.code === "Space"){
 
       event.preventDefault();
+
       toggle();
+
     }
 
     if(event.key === "ArrowLeft"){
 
-      if(words.length){
+      if(!words.length){
 
-        index =
-          Math.max(0,index - 1);
+        return;
 
-        render();
       }
+
+      i =
+        Math.max(
+          0,
+          i - 1
+        );
+
+      render();
+
+      scheduleSaveProgress();
+
     }
 
     if(event.key === "ArrowRight"){
 
-      if(words.length){
+      if(!words.length){
 
-        index =
-          Math.min(
-            words.length - 1,
-            index + 1
-          );
+        return;
 
-        render();
       }
+
+      i =
+        Math.min(
+          words.length - 1,
+          i + 1
+        );
+
+      render();
+
+      scheduleSaveProgress();
+
     }
 
     if(event.key === "ArrowUp"){
 
-      event.preventDefault();
-
       setSpeed(
-        Math.min(1000,speed + 25)
+        Math.min(
+          1000,
+          speed + 25
+        )
       );
+
+      updateTime();
+
     }
 
     if(event.key === "ArrowDown"){
 
-      event.preventDefault();
-
       setSpeed(
-        Math.max(100,speed - 25)
+        Math.max(
+          100,
+          speed - 25
+        )
       );
+
+      updateTime();
+
     }
+
   }
 );
 
+
+/* =========================================================
+   GUARDAR PROGRESO ANTES DE CERRAR
+========================================================= */
+
 window.addEventListener(
   "beforeunload",
-  saveProgress
+  ()=>{
+
+    if(currentPDF){
+
+      const page =
+        wordPages[i] || 1;
+
+      try{
+
+        const transaction =
+          db.transaction(
+            "progress",
+            "readwrite"
+          );
+
+        transaction
+          .objectStore("progress")
+          .put({
+
+            id:currentPDF.id,
+
+            index:i,
+
+            page,
+
+            updatedAt:Date.now()
+
+          });
+
+      }catch(error){
+
+        console.error(error);
+
+      }
+
+    }
+
+  }
 );
+
+
+/* =========================================================
+   INICIO
+========================================================= */
+
+async function init(){
+
+  try{
+
+    await openDB();
+
+    await renderPDFLibrary();
+
+  }catch(error){
+
+    console.error(error);
+
+    $('#pdfStatus').textContent =
+      "El almacenamiento local no está disponible en este navegador.";
+
+  }
+
+}
+
+init();
 
 </script>
 
