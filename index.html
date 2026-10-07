@@ -3,34 +3,37 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0d0f13">
+
 <title>Foco — Lector RSVP</title>
 
 <style>
 :root{
   color-scheme:dark;
   --bg:#0d0f13;
-  --p:#171a21;
-  --p2:#20242d;
-  --t:#f5f7fa;
-  --m:#9da5b2;
-  --l:#303641;
-  --a:#7dd3fc;
-  --y:#fbbf24
+  --panel:#171a21;
+  --panel2:#20242d;
+  --text:#f5f7fa;
+  --muted:#9da5b2;
+  --line:#303641;
+  --accent:#7dd3fc;
+  --pivot:#7dd3fc;
+  --good:#86efac;
 }
 
 *{box-sizing:border-box}
 
 html,body{
   margin:0;
+  min-height:100%;
   background:var(--bg);
-  color:var(--t);
-  font-family:system-ui,-apple-system,Segoe UI,sans-serif
+  color:var(--text);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
 
-#app{
-  min-height:100vh;
-  background:var(--bg)
-}
+button,input,textarea{font:inherit}
+
+button{cursor:pointer}
 
 header{
   height:68px;
@@ -38,65 +41,88 @@ header{
   align-items:center;
   justify-content:space-between;
   padding:0 22px;
-  border-bottom:1px solid var(--l)
+  border-bottom:1px solid var(--line);
 }
 
 .logo{
-  font-weight:800;
-  font-size:20px
+  font-size:21px;
+  font-weight:850;
 }
 
-.logo span{
-  color:var(--a)
-}
+.logo span{color:var(--accent)}
 
 .top{
   display:flex;
-  gap:10px
-}
-
-.pill,.btn{
-  border:1px solid var(--l);
-  background:var(--p2);
-  color:var(--t);
-  border-radius:10px;
-  padding:9px 12px
+  gap:10px;
+  align-items:center;
 }
 
 .pill{
+  border:1px solid var(--line);
   border-radius:999px;
+  padding:8px 11px;
+  color:var(--muted);
   font-size:12px;
-  color:var(--m)
 }
 
-button{
-  cursor:pointer;
-  font-weight:650
+.btn{
+  border:1px solid var(--line);
+  background:var(--panel2);
+  color:var(--text);
+  border-radius:10px;
+  padding:10px 12px;
+  font-weight:650;
 }
+
+.btn:hover{filter:brightness(1.08)}
 
 .primary{
-  background:var(--a);
+  background:var(--accent);
   color:#071017;
-  border-color:transparent
+  border-color:transparent;
 }
 
 main{
-  max-width:1180px;
+  max-width:1200px;
   margin:auto;
-  padding:26px 20px;
+  padding:24px 20px;
   display:grid;
-  grid-template-columns:minmax(0,1fr) 310px;
-  gap:20px
+  grid-template-columns:minmax(0,1fr) 330px;
+  gap:20px;
 }
 
 .reader{
-  min-height:620px;
-  background:radial-gradient(circle at 50% 45%,#1a1e27,#11141a 48%,#0d0f13);
-  border:1px solid var(--l);
+  min-height:640px;
+  border:1px solid var(--line);
   border-radius:20px;
+  overflow:hidden;
   display:flex;
   flex-direction:column;
-  overflow:hidden
+  background:
+    radial-gradient(circle at 50% 45%,#1a1e27,#11141a 48%,#0d0f13);
+}
+
+.documentInfo{
+  min-height:45px;
+  padding:10px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  border-bottom:1px solid var(--line);
+  color:var(--muted);
+  font-size:12px;
+}
+
+.documentInfo strong{
+  color:var(--text);
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+
+.pageInfo{
+  white-space:nowrap;
 }
 
 .stage{
@@ -104,18 +130,20 @@ main{
   display:grid;
   place-items:center;
   position:relative;
-  padding:30px 20px
+  padding:35px 20px;
+  min-height:420px;
+  overflow:hidden;
 }
 
-.focus{
+.focusLine{
   position:absolute;
   left:50%;
   top:50%;
-  height:100px;
+  height:105px;
   width:2px;
   transform:translate(-50%,-50%);
-  background:var(--a);
-  opacity:.35
+  background:var(--accent);
+  opacity:.25;
 }
 
 .word{
@@ -125,169 +153,275 @@ main{
   letter-spacing:-.055em;
   line-height:1;
   white-space:nowrap;
-  text-align:center
+  text-align:center;
 }
 
-.pivot{
-  color:var(--y)
-}
+.pivot{color:var(--pivot)}
 
 .empty{
-  color:var(--m);
-  font-size:18px;
+  max-width:520px;
+  color:var(--muted);
+  font-size:17px;
+  line-height:1.55;
   text-align:center;
-  line-height:1.5
+  white-space:normal;
+  letter-spacing:normal;
+  font-weight:400;
 }
 
-.empty strong{
-  color:var(--t)
-}
-
-.controls{
-  border-top:1px solid var(--l);
-  padding:15px 18px;
-  display:flex;
-  gap:9px;
-  align-items:center;
-  flex-wrap:wrap
-}
-
-.speed{
-  margin-left:auto;
-  color:var(--m)
-}
-
-.speed b{
-  color:var(--t);
-  font-size:17px
-}
+.empty strong{color:var(--text)}
 
 .progress{
-  height:4px;
-  background:#292e38
+  height:5px;
+  background:#292e38;
 }
 
 .bar{
   height:100%;
-  background:var(--a);
-  width:0%
+  width:0;
+  background:var(--accent);
+  transition:width .15s linear;
+}
+
+.controls{
+  padding:15px 18px;
+  border-top:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:9px;
+}
+
+.speedDisplay{
+  margin-left:auto;
+  color:var(--muted);
+}
+
+.speedDisplay b{
+  color:var(--text);
+  font-size:17px;
 }
 
 .sidebar{
   display:flex;
   flex-direction:column;
-  gap:14px
+  gap:14px;
 }
 
 .card{
-  background:var(--p);
-  border:1px solid var(--l);
+  border:1px solid var(--line);
+  background:var(--panel);
   border-radius:16px;
-  padding:17px
+  padding:17px;
 }
 
 .card h3{
   margin:0 0 13px;
-  font-size:14px
+  font-size:14px;
+}
+
+.upload{
+  display:block;
+  border:1px dashed #46505e;
+  border-radius:12px;
+  padding:18px 12px;
+  text-align:center;
+  color:var(--muted);
+  cursor:pointer;
+}
+
+.upload:hover{
+  border-color:var(--accent);
+  color:var(--text);
+}
+
+.upload strong{
+  display:block;
+  color:var(--text);
+  margin-bottom:5px;
+}
+
+#pdfInput{display:none}
+
+.pdfStatus{
+  margin-top:10px;
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.45;
+}
+
+.pdfStatus.good{color:var(--good)}
+
+.resumeBox{
+  display:none;
+  margin-top:12px;
+  padding:12px;
+  border-radius:11px;
+  background:var(--panel2);
+  border:1px solid var(--line);
+}
+
+.resumeBox strong{
+  display:block;
+  margin-bottom:5px;
+}
+
+.resumeBox p{
+  margin:0 0 10px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.45;
 }
 
 textarea{
   width:100%;
-  min-height:190px;
+  min-height:150px;
   resize:vertical;
   background:#0f1217;
-  color:var(--t);
-  border:1px solid var(--l);
+  color:var(--text);
+  border:1px solid var(--line);
   border-radius:10px;
   padding:12px;
-  font:14px/1.5 inherit
+  font-size:14px;
+  line-height:1.5;
 }
 
 .row{
   display:flex;
   gap:8px;
-  margin-top:8px
+  margin-top:8px;
 }
 
-.row>*{
-  flex:1
-}
+.row>*{flex:1}
 
-.field{
-  margin:12px 0
-}
+.field{margin:13px 0}
 
 .field label{
   display:flex;
   justify-content:space-between;
-  color:var(--m);
+  margin-bottom:7px;
+  color:var(--muted);
   font-size:12px;
-  margin-bottom:7px
 }
 
 input[type=range]{
   width:100%;
-  accent-color:var(--a)
+  accent-color:var(--accent);
 }
 
 .stats{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:8px
+  gap:8px;
 }
 
 .stat{
-  background:var(--p2);
+  background:var(--panel2);
   border-radius:10px;
-  padding:11px
+  padding:11px;
 }
 
 .stat small{
   display:block;
-  color:var(--m);
-  font-size:11px
+  color:var(--muted);
+  font-size:11px;
 }
 
 .stat strong{
   display:block;
   margin-top:4px;
-  font-size:18px
+  font-size:17px;
+}
+
+.marker{
+  margin-top:10px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.5;
 }
 
 .hint{
-  color:var(--m);
+  color:var(--muted);
   font-size:12px;
-  line-height:1.5
+  line-height:1.5;
+}
+
+.divider{
+  height:1px;
+  background:var(--line);
+  margin:16px 0;
+}
+
+.loading{
+  display:none;
+  margin-top:10px;
+}
+
+.loadingBar{
+  height:5px;
+  background:#292e38;
+  border-radius:999px;
+  overflow:hidden;
+}
+
+.loadingFill{
+  height:100%;
+  width:0;
+  background:var(--accent);
+}
+
+.loadingText{
+  color:var(--muted);
+  font-size:11px;
+  margin-top:6px;
 }
 
 @media(max-width:850px){
+
+  header{
+    height:60px;
+    padding:0 14px;
+  }
+
   main{
     grid-template-columns:1fr;
-    padding:12px
+    padding:12px;
   }
 
   .reader{
-    min-height:65vh
+    min-height:62vh;
   }
 
   .sidebar{
-    order:2
+    order:2;
   }
 
   .pill{
-    display:none
-  }
-
-  .speed{
-    margin-left:0
+    display:none;
   }
 
   .stage{
-    min-height:330px
+    min-height:330px;
+    padding:25px 10px;
   }
 
   .word{
-    font-size:clamp(44px,13vw,80px)
+    font-size:clamp(42px,13vw,80px);
+  }
+
+  .controls{
+    justify-content:center;
+    padding:12px;
+  }
+
+  .speedDisplay{
+    margin-left:0;
+    width:100%;
+    text-align:center;
+  }
+
+  .documentInfo{
+    padding:9px 12px;
   }
 }
 </style>
@@ -295,14 +429,12 @@ input[type=range]{
 
 <body>
 
-<div id="app">
-
 <header>
   <div class="logo">Foco<span>.</span></div>
 
   <div class="top">
     <div class="pill">RSVP · lectura rápida</div>
-    <button class="btn" id="clear">Nuevo texto</button>
+    <button class="btn" id="clear">Nueva lectura</button>
   </div>
 </header>
 
@@ -310,16 +442,22 @@ input[type=range]{
 
 <section class="reader">
 
+  <div class="documentInfo">
+    <strong id="docName">Sin documento</strong>
+    <span class="pageInfo" id="pageInfo">—</span>
+  </div>
+
   <div class="stage">
-    <div class="focus"></div>
+
+    <div class="focusLine" id="focusLine"></div>
 
     <div id="word" class="word">
       <div class="empty">
-        <strong>Pegá un texto para empezar.</strong>
-        <br>
-        La palabra aparecerá en el centro y la letra de referencia quedará fija.
+        <strong>Bienvenido a Foco.</strong><br>
+        Cargá un PDF o pegá un texto para comenzar.
       </div>
     </div>
+
   </div>
 
   <div class="progress">
@@ -327,15 +465,23 @@ input[type=range]{
   </div>
 
   <div class="controls">
+
     <button class="btn" id="back">↶ 10</button>
-    <button class="btn primary" id="play">▶ Iniciar</button>
+
+    <button class="btn primary" id="play">
+      ▶ Iniciar
+    </button>
+
     <button class="btn" id="next">10 ↷</button>
+
     <button class="btn" id="slower">−</button>
+
     <button class="btn" id="faster">+</button>
 
-    <div class="speed">
+    <div class="speedDisplay">
       <b id="speedOut">300</b> ppm
     </div>
+
   </div>
 
 </section>
@@ -343,23 +489,79 @@ input[type=range]{
 <aside class="sidebar">
 
   <div class="card">
-    <h3>Texto</h3>
 
-    <textarea
-      id="text"
-      placeholder="Pegá acá un artículo, apuntes, un capítulo…">
-    </textarea>
+    <h3>📄 Abrir PDF</h3>
 
-    <div class="row">
-      <button class="btn primary" id="load">Cargar texto</button>
-      <button class="btn" id="sample">Ejemplo</button>
+    <label class="upload" for="pdfInput">
+      <strong>Seleccionar PDF</strong>
+      Tocá acá para elegir un archivo
+    </label>
+
+    <input
+      id="pdfInput"
+      type="file"
+      accept="application/pdf,.pdf"
+    >
+
+    <div class="loading" id="loading">
+      <div class="loadingBar">
+        <div class="loadingFill" id="loadingFill"></div>
+      </div>
+      <div class="loadingText" id="loadingText">
+        Leyendo PDF...
+      </div>
     </div>
+
+    <div class="pdfStatus" id="pdfStatus">
+      El PDF se procesa en este dispositivo.
+    </div>
+
+    <div class="resumeBox" id="resumeBox">
+
+      <strong>📍 Lectura encontrada</strong>
+
+      <p id="resumeText"></p>
+
+      <div class="row">
+        <button class="btn primary" id="resumeBtn">
+          Continuar
+        </button>
+
+        <button class="btn" id="restartBtn">
+          Desde inicio
+        </button>
+      </div>
+
+    </div>
+
   </div>
 
   <div class="card">
+
+    <h3>📝 Texto manual</h3>
+
+    <textarea
+      id="text"
+      placeholder="También podés pegar acá un artículo, apuntes o cualquier texto..."></textarea>
+
+    <div class="row">
+      <button class="btn primary" id="load">
+        Cargar texto
+      </button>
+
+      <button class="btn" id="sample">
+        Ejemplo
+      </button>
+    </div>
+
+  </div>
+
+  <div class="card">
+
     <h3>Lectura</h3>
 
     <div class="field">
+
       <label>
         Velocidad
         <output id="speedLabel">300 ppm</output>
@@ -372,9 +574,11 @@ input[type=range]{
         max="1000"
         step="10"
         value="300">
+
     </div>
 
     <div class="field">
+
       <label>
         Tamaño
         <output id="sizeLabel">76 px</output>
@@ -387,9 +591,11 @@ input[type=range]{
         max="120"
         step="2"
         value="76">
+
     </div>
 
     <div class="field">
+
       <label>
         Modo enfoque
         <output id="focusLabel">activado</output>
@@ -401,10 +607,13 @@ input[type=range]{
         style="width:100%">
         Cambiar enfoque
       </button>
+
     </div>
+
   </div>
 
   <div class="card">
+
     <h3>Progreso</h3>
 
     <div class="stats">
@@ -415,271 +624,824 @@ input[type=range]{
       </div>
 
       <div class="stat">
-        <small>Tiempo</small>
+        <small>Progreso</small>
+        <strong id="percent">0%</strong>
+      </div>
+
+      <div class="stat">
+        <small>Página</small>
+        <strong id="pageStat">—</strong>
+      </div>
+
+      <div class="stat">
+        <small>Restante</small>
         <strong id="time">0:00</strong>
       </div>
 
     </div>
 
+    <div class="marker" id="markerInfo">
+      📍 El progreso del PDF se guardará automáticamente.
+    </div>
+
+    <div class="divider"></div>
+
     <p class="hint">
-      Atajos: espacio = pausa · ←/→ = retroceder/avanzar · ↑/↓ = velocidad.
+      Espacio = pausa · ←/→ = palabra anterior/siguiente · ↑/↓ = velocidad.
     </p>
+
   </div>
 
 </aside>
 
 </main>
-</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <script>
 
-const $ = s => document.querySelector(s);
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+const $ = selector => document.querySelector(selector);
 
 let words = [];
-let i = 0;
+let wordPages = [];
+
+let index = 0;
 let timer = null;
 let playing = false;
+
 let speed = 300;
 let focus = true;
 
-const samples = `
-La lectura rápida no consiste simplemente en hacer que las palabras pasen cada vez más rápido. El objetivo es encontrar una velocidad en la que los ojos puedan fijarse con precisión y el cerebro todavía tenga tiempo suficiente para construir significado. La presentación serial de palabras elimina parte del movimiento ocular que normalmente hacemos al recorrer una línea, y por eso puede resultar sorprendentemente cómoda después de unos minutos de adaptación.
-`;
+let documentType = null;
+let currentPDFKey = null;
+let currentPDFName = null;
+let totalPages = 0;
 
-function clean(t){
-  return t.replace(/\s+/g,' ').trim();
+let pendingSavedIndex = 0;
+
+const sampleText =
+`La lectura rápida no consiste simplemente en hacer que las palabras pasen cada vez más rápido. El objetivo es encontrar una velocidad en la que los ojos puedan fijarse con precisión y el cerebro todavía tenga tiempo suficiente para construir significado. La presentación serial de palabras elimina parte del movimiento ocular que normalmente hacemos al recorrer una línea, y por eso puede resultar sorprendentemente cómoda después de unos minutos de adaptación.`;
+
+function cleanText(text){
+  return text
+    .replace(/\s+/g," ")
+    .trim();
 }
 
-function pivotHTML(w){
+function escapeHTML(text){
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
 
-  if(!focus) return w;
+function pivotHTML(word){
 
-  let p = Math.max(
+  const safe = escapeHTML(word);
+
+  if(!focus || !word.length)
+    return safe;
+
+  let position = Math.max(
     0,
     Math.min(
-      w.length - 1,
-      Math.floor((w.length - 1) * .38)
+      word.length - 1,
+      Math.floor((word.length - 1) * 0.38)
     )
   );
 
-  return w.slice(0,p)
-    + '<span class="pivot">'
-    + w[p]
-    + '</span>'
-    + w.slice(p+1);
+  return (
+    escapeHTML(word.slice(0,position)) +
+    '<span class="pivot">' +
+    escapeHTML(word[position]) +
+    '</span>' +
+    escapeHTML(word.slice(position + 1))
+  );
+}
+
+function currentPage(){
+
+  if(
+    documentType !== "pdf" ||
+    !wordPages.length
+  ){
+    return null;
+  }
+
+  return wordPages[index] || 1;
 }
 
 function render(){
 
-  if(!words.length) return;
+  if(!words.length)
+    return;
 
-  $('#word').innerHTML = pivotHTML(words[i]);
+  $("#word").innerHTML =
+    pivotHTML(words[index]);
 
-  $('#count').textContent =
-    `${i+1} / ${words.length}`;
+  $("#count").textContent =
+    `${index + 1} / ${words.length}`;
 
-  $('#bar').style.width =
-    ((i+1)/words.length*100) + '%';
+  const progress =
+    ((index + 1) / words.length) * 100;
+
+  $("#bar").style.width =
+    progress + "%";
+
+  $("#percent").textContent =
+    Math.floor(progress) + "%";
+
+  const page = currentPage();
+
+  if(page){
+
+    $("#pageInfo").textContent =
+      `Página ${page} de ${totalPages}`;
+
+    $("#pageStat").textContent =
+      `${page}/${totalPages}`;
+
+  }else{
+
+    $("#pageInfo").textContent =
+      "Texto";
+
+    $("#pageStat").textContent =
+      "—";
+  }
+
+  updateTime();
+
+  if(documentType === "pdf")
+    saveProgress();
+}
+
+function punctuationDelay(word){
+
+  const base = 60000 / speed;
+
+  if(/[.!?…]["')\]]?$/.test(word))
+    return base * 1.8;
+
+  if(/[,;:]["')\]]?$/.test(word))
+    return base * 1.35;
+
+  return base;
 }
 
 function loop(){
 
-  if(!playing) return;
+  if(!playing)
+    return;
+
+  const delay =
+    punctuationDelay(words[index] || "");
 
   timer = setTimeout(() => {
 
-    if(i >= words.length-1){
+    if(index >= words.length - 1){
 
       playing = false;
-      $('#play').textContent = '▶ Reiniciar';
+
+      $("#play").textContent =
+        "▶ Reiniciar";
+
+      saveProgress();
 
       return;
     }
 
-    i++;
+    index++;
+
     render();
     loop();
 
-  },60000/speed);
+  },delay);
 }
 
 function toggle(){
 
-  if(!words.length) return;
+  if(!words.length)
+    return;
 
-  if(i >= words.length-1)
-    i = 0;
+  if(index >= words.length - 1)
+    index = 0;
 
   playing = !playing;
 
-  $('#play').textContent =
-    playing ? '⏸ Pausar' : '▶ Continuar';
+  $("#play").textContent =
+    playing
+      ? "⏸ Pausar"
+      : "▶ Continuar";
 
   clearTimeout(timer);
 
   if(playing)
     loop();
+
+  saveProgress();
 }
 
-function load(){
+function updateTime(){
 
-  let t = clean($('#text').value);
+  if(!words.length){
 
-  if(!t) return;
+    $("#time").textContent = "0:00";
+    return;
+  }
 
-  words = t.split(' ');
-  i = 0;
-  playing = false;
+  const remaining =
+    Math.max(0,words.length - index - 1);
 
-  clearTimeout(timer);
+  const seconds =
+    Math.ceil(remaining / speed * 60);
 
-  $('#play').textContent = '▶ Iniciar';
+  const minutes =
+    Math.floor(seconds / 60);
 
-  render();
+  const secs =
+    String(seconds % 60).padStart(2,"0");
+
+  $("#time").textContent =
+    `${minutes}:${secs}`;
+}
+
+function setSpeed(value){
+
+  speed = Number(value);
+
+  $("#speed").value = speed;
+
+  $("#speedOut").textContent =
+    speed;
+
+  $("#speedLabel").textContent =
+    speed + " ppm";
+
   updateTime();
-}
-
-function setSpeed(v){
-
-  speed = +v;
-
-  $('#speed').value = speed;
-  $('#speedOut').textContent = speed;
-  $('#speedLabel').textContent = speed + ' ppm';
 
   if(playing){
+
     clearTimeout(timer);
     loop();
   }
 }
 
-function updateTime(){
+function stopReading(){
 
-  let s = Math.ceil(
-    words.length / speed * 60
-  );
-
-  $('#time').textContent =
-    `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
-}
-
-$('#load').onclick = load;
-
-$('#sample').onclick = () => {
-  $('#text').value = samples;
-  load();
-};
-
-$('#clear').onclick = () => {
-
-  words = [];
-  i = 0;
   playing = false;
-
   clearTimeout(timer);
 
-  $('#text').value = '';
+  $("#play").textContent =
+    "▶ Iniciar";
+}
 
-  $('#play').textContent = '▶ Iniciar';
+function loadManualText(){
 
-  $('#word').innerHTML =
-    '<div class="empty">' +
-    '<strong>Pegá un texto para empezar.</strong>' +
-    '<br>' +
-    'La palabra aparecerá en el centro y la letra de referencia quedará fija.' +
-    '</div>';
+  const text =
+    cleanText($("#text").value);
 
-  $('#bar').style.width = '0%';
-  $('#count').textContent = '0 / 0';
+  if(!text)
+    return;
+
+  stopReading();
+
+  words =
+    text.split(" ").filter(Boolean);
+
+  wordPages = [];
+
+  index = 0;
+
+  documentType = "text";
+  currentPDFKey = null;
+  currentPDFName = null;
+  totalPages = 0;
+
+  $("#docName").textContent =
+    "Texto manual";
+
+  $("#resumeBox").style.display =
+    "none";
+
+  render();
+}
+
+function createPDFKey(file){
+
+  return (
+    "foco_pdf_" +
+    encodeURIComponent(
+      file.name +
+      "_" +
+      file.size +
+      "_" +
+      file.lastModified
+    )
+  );
+}
+
+function saveProgress(){
+
+  if(
+    documentType !== "pdf" ||
+    !currentPDFKey ||
+    !words.length
+  ){
+    return;
+  }
+
+  const data = {
+    name:currentPDFName,
+    index:index,
+    page:currentPage(),
+    totalPages:totalPages,
+    totalWords:words.length,
+    updatedAt:Date.now()
+  };
+
+  try{
+
+    localStorage.setItem(
+      currentPDFKey,
+      JSON.stringify(data)
+    );
+
+    $("#markerInfo").textContent =
+      `📍 Guardado · página ${data.page} · ${Math.floor(((index+1)/words.length)*100)}%`;
+
+  }catch(error){
+
+    $("#markerInfo").textContent =
+      "No se pudo guardar el marcador.";
+  }
+}
+
+function getSavedProgress(key){
+
+  try{
+
+    const raw =
+      localStorage.getItem(key);
+
+    if(!raw)
+      return null;
+
+    return JSON.parse(raw);
+
+  }catch(error){
+
+    return null;
+  }
+}
+
+async function loadPDF(file){
+
+  if(!file)
+    return;
+
+  if(
+    file.type !== "application/pdf" &&
+    !file.name.toLowerCase().endsWith(".pdf")
+  ){
+
+    $("#pdfStatus").textContent =
+      "Ese archivo no parece ser un PDF.";
+
+    return;
+  }
+
+  stopReading();
+
+  $("#resumeBox").style.display =
+    "none";
+
+  $("#loading").style.display =
+    "block";
+
+  $("#loadingFill").style.width =
+    "0%";
+
+  $("#loadingText").textContent =
+    "Abriendo PDF...";
+
+  $("#pdfStatus").classList.remove("good");
+
+  $("#pdfStatus").textContent =
+    "Procesando el PDF en este dispositivo...";
+
+  try{
+
+    const buffer =
+      await file.arrayBuffer();
+
+    const pdf =
+      await pdfjsLib.getDocument({
+        data:buffer
+      }).promise;
+
+    totalPages =
+      pdf.numPages;
+
+    const extractedWords = [];
+    const extractedPages = [];
+
+    for(
+      let pageNumber = 1;
+      pageNumber <= totalPages;
+      pageNumber++
+    ){
+
+      $("#loadingText").textContent =
+        `Leyendo página ${pageNumber} de ${totalPages}...`;
+
+      $("#loadingFill").style.width =
+        ((pageNumber / totalPages) * 100) + "%";
+
+      const page =
+        await pdf.getPage(pageNumber);
+
+      const content =
+        await page.getTextContent();
+
+      const pageText =
+        cleanText(
+          content.items
+            .map(item => item.str)
+            .join(" ")
+        );
+
+      if(pageText){
+
+        const pageWords =
+          pageText
+            .split(" ")
+            .filter(Boolean);
+
+        for(const word of pageWords){
+
+          extractedWords.push(word);
+          extractedPages.push(pageNumber);
+        }
+      }
+    }
+
+    if(!extractedWords.length){
+
+      throw new Error(
+        "NO_TEXT"
+      );
+    }
+
+    words =
+      extractedWords;
+
+    wordPages =
+      extractedPages;
+
+    index = 0;
+
+    documentType =
+      "pdf";
+
+    currentPDFName =
+      file.name;
+
+    currentPDFKey =
+      createPDFKey(file);
+
+    $("#docName").textContent =
+      file.name;
+
+    $("#text").value = "";
+
+    $("#pdfStatus").classList.add("good");
+
+    $("#pdfStatus").textContent =
+      `✓ ${totalPages} páginas · ${words.length.toLocaleString("es-AR")} palabras`;
+
+    const saved =
+      getSavedProgress(currentPDFKey);
+
+    if(
+      saved &&
+      Number.isInteger(saved.index) &&
+      saved.index > 0 &&
+      saved.index < words.length
+    ){
+
+      pendingSavedIndex =
+        saved.index;
+
+      const savedPercent =
+        Math.floor(
+          ((saved.index + 1) / words.length) * 100
+        );
+
+      $("#resumeText").textContent =
+        `Quedaste en la página ${saved.page || "—"} de ${totalPages} · ${savedPercent}% del documento.`;
+
+      $("#resumeBox").style.display =
+        "block";
+
+      index = 0;
+
+    }else{
+
+      $("#resumeBox").style.display =
+        "none";
+    }
+
+    render();
+
+  }catch(error){
+
+    console.error(error);
+
+    words = [];
+    wordPages = [];
+
+    $("#docName").textContent =
+      "Sin documento";
+
+    $("#pageInfo").textContent =
+      "—";
+
+    $("#pdfStatus").classList.remove("good");
+
+    if(error.message === "NO_TEXT"){
+
+      $("#pdfStatus").textContent =
+        "Este PDF no contiene texto extraíble. Probablemente sea un documento escaneado.";
+
+    }else{
+
+      $("#pdfStatus").textContent =
+        "No pude leer este PDF. Probá con otro archivo.";
+    }
+
+  }finally{
+
+    $("#loading").style.display =
+      "none";
+  }
+}
+
+function clearReader(){
+
+  stopReading();
+
+  saveProgress();
+
+  words = [];
+  wordPages = [];
+
+  index = 0;
+
+  documentType = null;
+  currentPDFKey = null;
+  currentPDFName = null;
+  totalPages = 0;
+
+  $("#text").value = "";
+  $("#pdfInput").value = "";
+
+  $("#docName").textContent =
+    "Sin documento";
+
+  $("#pageInfo").textContent =
+    "—";
+
+  $("#count").textContent =
+    "0 / 0";
+
+  $("#percent").textContent =
+    "0%";
+
+  $("#pageStat").textContent =
+    "—";
+
+  $("#time").textContent =
+    "0:00";
+
+  $("#bar").style.width =
+    "0%";
+
+  $("#resumeBox").style.display =
+    "none";
+
+  $("#pdfStatus").classList.remove("good");
+
+  $("#pdfStatus").textContent =
+    "El PDF se procesa en este dispositivo.";
+
+  $("#markerInfo").textContent =
+    "📍 El progreso del PDF se guardará automáticamente.";
+
+  $("#word").innerHTML =
+    '<div class="empty"><strong>Bienvenido a Foco.</strong><br>Cargá un PDF o pegá un texto para comenzar.</div>';
+}
+
+$("#pdfInput").addEventListener(
+  "change",
+  event => {
+
+    const file =
+      event.target.files[0];
+
+    loadPDF(file);
+  }
+);
+
+$("#resumeBtn").onclick = () => {
+
+  index =
+    Math.min(
+      pendingSavedIndex,
+      words.length - 1
+    );
+
+  $("#resumeBox").style.display =
+    "none";
+
+  render();
+
+  $("#play").textContent =
+    "▶ Continuar";
 };
 
-$('#play').onclick = toggle;
+$("#restartBtn").onclick = () => {
 
-$('#back').onclick = () => {
+  index = 0;
 
-  i = Math.max(0,i-10);
+  $("#resumeBox").style.display =
+    "none";
+
+  render();
+
+  saveProgress();
+};
+
+$("#load").onclick =
+  loadManualText;
+
+$("#sample").onclick = () => {
+
+  $("#text").value =
+    sampleText;
+
+  loadManualText();
+};
+
+$("#clear").onclick =
+  clearReader;
+
+$("#play").onclick =
+  toggle;
+
+$("#back").onclick = () => {
+
+  if(!words.length)
+    return;
+
+  index =
+    Math.max(0,index - 10);
+
   render();
 };
 
-$('#next').onclick = () => {
+$("#next").onclick = () => {
 
-  if(words.length)
-    i = Math.min(words.length-1,i+10);
+  if(!words.length)
+    return;
+
+  index =
+    Math.min(
+      words.length - 1,
+      index + 10
+    );
 
   render();
 };
 
-$('#slower').onclick = () => {
+$("#slower").onclick = () => {
 
-  setSpeed(Math.max(100,speed-25));
-  updateTime();
+  setSpeed(
+    Math.max(100,speed - 25)
+  );
 };
 
-$('#faster').onclick = () => {
+$("#faster").onclick = () => {
 
-  setSpeed(Math.min(1000,speed+25));
-  updateTime();
+  setSpeed(
+    Math.min(1000,speed + 25)
+  );
 };
 
-$('#speed').oninput = e => {
+$("#speed").oninput = event => {
 
-  setSpeed(e.target.value);
-  updateTime();
+  setSpeed(
+    event.target.value
+  );
 };
 
-$('#size').oninput = e => {
+$("#size").oninput = event => {
 
-  $('#word').style.fontSize =
-    e.target.value + 'px';
+  const size =
+    event.target.value;
 
-  $('#sizeLabel').textContent =
-    e.target.value + ' px';
+  $("#word").style.fontSize =
+    size + "px";
+
+  $("#sizeLabel").textContent =
+    size + " px";
 };
 
-$('#toggleFocus').onclick = () => {
+$("#toggleFocus").onclick = () => {
 
   focus = !focus;
 
-  $('#focusLabel').textContent =
-    focus ? 'activado' : 'desactivado';
+  $("#focusLabel").textContent =
+    focus
+      ? "activado"
+      : "desactivado";
 
-  $('.focus').style.opacity =
-    focus ? '.35' : '0';
+  $("#focusLine").style.opacity =
+    focus
+      ? ".25"
+      : "0";
 
   render();
 };
 
-document.addEventListener('keydown',e => {
+document.addEventListener(
+  "keydown",
+  event => {
 
-  if(e.target.tagName === 'TEXTAREA')
-    return;
+    if(
+      event.target.tagName === "TEXTAREA" ||
+      event.target.tagName === "INPUT"
+    ){
+      return;
+    }
 
-  if(e.code === 'Space'){
-    e.preventDefault();
-    toggle();
+    if(event.code === "Space"){
+
+      event.preventDefault();
+      toggle();
+    }
+
+    if(event.key === "ArrowLeft"){
+
+      if(words.length){
+
+        index =
+          Math.max(0,index - 1);
+
+        render();
+      }
+    }
+
+    if(event.key === "ArrowRight"){
+
+      if(words.length){
+
+        index =
+          Math.min(
+            words.length - 1,
+            index + 1
+          );
+
+        render();
+      }
+    }
+
+    if(event.key === "ArrowUp"){
+
+      event.preventDefault();
+
+      setSpeed(
+        Math.min(1000,speed + 25)
+      );
+    }
+
+    if(event.key === "ArrowDown"){
+
+      event.preventDefault();
+
+      setSpeed(
+        Math.max(100,speed - 25)
+      );
+    }
   }
+);
 
-  if(e.key === 'ArrowLeft'){
-    i = Math.max(0,i-1);
-    render();
-  }
-
-  if(e.key === 'ArrowRight'){
-    i = Math.min(words.length-1,i+1);
-    render();
-  }
-
-  if(e.key === 'ArrowUp'){
-    setSpeed(Math.min(1000,speed+25));
-    updateTime();
-  }
-
-  if(e.key === 'ArrowDown'){
-    setSpeed(Math.max(100,speed-25));
-    updateTime();
-  }
-
-});
+window.addEventListener(
+  "beforeunload",
+  saveProgress
+);
 
 </script>
 
